@@ -32,6 +32,7 @@ matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from matplotlib import rcParams
 
@@ -48,7 +49,7 @@ from PyQt5.QtWidgets import (
     QGridLayout, QTableWidget, QTableWidgetItem, QComboBox,
     QSpinBox, QDoubleSpinBox, QHeaderView, QFrame, QMessageBox,
     QProgressBar, QSizePolicy, QStackedWidget, QRadioButton,
-    QButtonGroup, QLineEdit, QScrollArea, QSplitter
+    QButtonGroup, QLineEdit, QScrollArea, QSplitter, QAbstractItemView
 )
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 from PyQt5.QtGui import QFont, QColor, QPalette, QLinearGradient
@@ -95,19 +96,21 @@ for k, v in {
     "axes.facecolor":   BG_LIGHT,
     "axes.edgecolor":   BORDER2,
     "axes.labelcolor":  TEXT_MID,
-    "axes.labelsize":   11,
+    "axes.labelsize":   13,
+    "axes.titlesize":   14,
     "xtick.color":      TEXT_LIGHT,
     "ytick.color":      TEXT_LIGHT,
-    "xtick.labelsize":  9,
-    "ytick.labelsize":  9,
+    "xtick.labelsize":  11,
+    "ytick.labelsize":  11,
     "text.color":       TEXT_DARK,
     "grid.color":       BORDER,
     "grid.linewidth":   0.7,
     "grid.alpha":       0.8,
     "legend.facecolor": BG_WHITE,
     "legend.edgecolor": BORDER2,
-    "legend.fontsize":  10,
-    "lines.linewidth":  1.5,
+    "legend.fontsize":  12,
+    "lines.linewidth":  1.8,
+    "figure.dpi":       110,
 }.items():
     rcParams[k] = v
 
@@ -118,7 +121,7 @@ QMainWindow, QWidget {
     background: #FFFFFF;
     color: #0D2137;
     font-family: 'Microsoft YaHei', 'SimHei';
-    font-size: 14px;
+    font-size: 16px;
 }
 
 /* ===== 标签页 ===== */
@@ -130,13 +133,13 @@ QTabWidget::pane {
 QTabBar::tab {
     background: #E3F2FD;
     color: #34567A;
-    padding: 12px 26px;
+    padding: 14px 30px;
     border: 1px solid #90CAF9;
     border-bottom: none;
     margin-right: 3px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    font-size: 14px;
+    font-size: 17px;
     font-weight: bold;
 }
 QTabBar::tab:selected {
@@ -155,8 +158,8 @@ QPushButton {
     color: #0D2137;
     border: 2px solid #90CAF9;
     border-radius: 8px;
-    padding: 9px 16px;
-    font-size: 14px;
+    padding: 12px 18px;
+    font-size: 16px;
     font-weight: bold;
 }
 QPushButton:hover {
@@ -168,7 +171,7 @@ QPushButton#primary {
     background: #1565C0;
     color: #FFFFFF;
     border: none;
-    font-size: 15px;
+    font-size: 17px;
 }
 QPushButton#primary:hover {
     background: #1976D2;
@@ -177,7 +180,7 @@ QPushButton#gold {
     background: #E65100;
     color: #FFFFFF;
     border: none;
-    font-size: 15px;
+    font-size: 17px;
 }
 QPushButton#gold:hover {
     background: #F57C00;
@@ -186,7 +189,7 @@ QPushButton#danger {
     background: #C62828;
     color: #FFFFFF;
     border: none;
-    font-size: 14px;
+    font-size: 16px;
 }
 QPushButton#danger:hover {
     background: #E53935;
@@ -197,11 +200,11 @@ QGroupBox {
     border: 2px solid #90CAF9;
     border-radius: 10px;
     margin-top: 18px;
-    padding-top: 12px;
+    padding-top: 16px;
     background: #F0F6FF;
     color: #1565C0;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
 }
 QGroupBox::title {
     subcontrol-origin: margin;
@@ -210,7 +213,7 @@ QGroupBox::title {
     padding: 0 8px;
     background: #FFFFFF;
     color: #1565C0;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
 }
 
@@ -220,9 +223,9 @@ QComboBox, QSpinBox, QDoubleSpinBox {
     color: #0D2137;
     border: 2px solid #90CAF9;
     border-radius: 6px;
-    padding: 6px 10px;
-    font-size: 13px;
-    min-height: 28px;
+    padding: 8px 12px;
+    font-size: 15px;
+    min-height: 34px;
 }
 QComboBox:hover, QSpinBox:hover, QDoubleSpinBox:hover {
     border: 2px solid #1565C0;
@@ -232,19 +235,19 @@ QComboBox QAbstractItemView {
     color: #0D2137;
     selection-background-color: #1565C0;
     selection-color: #FFFFFF;
-    font-size: 13px;
+    font-size: 15px;
 }
 
 /* ===== 单选按钮 ===== */
 QRadioButton {
     color: #0D2137;
-    font-size: 14px;
+    font-size: 16px;
     spacing: 8px;
 }
 QRadioButton::indicator {
-    width: 16px;
-    height: 16px;
-    border-radius: 8px;
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
     border: 2px solid #90CAF9;
     background: #FFFFFF;
 }
@@ -261,19 +264,19 @@ QTableWidget {
     gridline-color: #BBDEFB;
     selection-background-color: #1565C0;
     selection-color: #FFFFFF;
-    font-size: 13px;
+    font-size: 15px;
     border-radius: 6px;
 }
 QHeaderView::section {
     background: #E3F2FD;
     color: #1565C0;
     border: 1px solid #90CAF9;
-    padding: 8px;
+    padding: 10px;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 15px;
 }
 QTableWidget::item {
-    padding: 6px;
+    padding: 8px;
 }
 QTableWidget::item:alternate {
     background: #F0F6FF;
@@ -282,14 +285,14 @@ QTableWidget::item:alternate {
 /* ===== 标签 ===== */
 QLabel {
     color: #0D2137;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 /* ===== 进度条 ===== */
 QProgressBar {
     background: #E3F2FD;
     border-radius: 5px;
-    height: 8px;
+    height: 12px;
     color: transparent;
     border: 1px solid #90CAF9;
 }
@@ -303,19 +306,41 @@ QStatusBar {
     background: #E3F2FD;
     color: #34567A;
     border-top: 2px solid #90CAF9;
+    font-size: 15px;
+    padding: 6px 12px;
+}
+
+/* ===== 图表交互工具栏 ===== */
+QToolBar, QToolButton {
+    background: #FFFFFF;
+    color: #0D2137;
+    border: 1px solid #BBDEFB;
+    border-radius: 6px;
+    padding: 4px;
+    font-size: 14px;
+}
+QToolButton:hover {
+    background: #E3F2FD;
+    border: 1px solid #1565C0;
+}
+QLabel#coordLabel {
+    background: #F8FBFF;
+    color: #34567A;
+    border: 1px solid #BBDEFB;
+    border-radius: 6px;
+    padding: 5px 8px;
     font-size: 13px;
-    padding: 4px 10px;
 }
 
 /* ===== 滚动条 ===== */
 QScrollBar:vertical {
     background: #E3F2FD;
-    width: 8px;
-    border-radius: 4px;
+    width: 12px;
+    border-radius: 6px;
 }
 QScrollBar::handle:vertical {
     background: #90CAF9;
-    border-radius: 4px;
+    border-radius: 6px;
     min-height: 20px;
 }
 QScrollBar::handle:vertical:hover {
@@ -323,6 +348,228 @@ QScrollBar::handle:vertical:hover {
 }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
 """
+
+
+class Canvas(QWidget):
+    """Matplotlib canvas with built-in navigation and coordinate feedback."""
+
+    def __init__(self, rows=1, cols=1, figsize=(8, 4), show_toolbar=True):
+        super().__init__()
+        self.rows = rows
+        self.cols = cols
+        self.fig = Figure(figsize=figsize)
+        self.canvas = FigureCanvas(self.fig)
+        self.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(4)
+
+        if show_toolbar:
+            self.toolbar = NavigationToolbar(self.canvas, self)
+            self.toolbar.setToolTip("交互工具栏：可缩放、平移、还原视图并保存图表")
+            layout.addWidget(self.toolbar)
+
+        layout.addWidget(self.canvas, 1)
+
+        self.coord_label = QLabel("提示：使用工具栏可缩放/平移/保存图表，鼠标移入图表可查看坐标")
+        self.coord_label.setObjectName("coordLabel")
+        layout.addWidget(self.coord_label)
+
+        self.axes = []
+        self._build_axes()
+        self.canvas.mpl_connect("motion_notify_event", self._on_motion)
+        self.canvas.mpl_connect("figure_leave_event", self._on_leave)
+
+    def _build_axes(self):
+        self.axes = []
+        total = self.rows * self.cols
+        for i in range(total):
+            ax = self.fig.add_subplot(self.rows, self.cols, i + 1)
+            self._style_axis(ax)
+            self.axes.append(ax)
+        self.fig.patch.set_facecolor(BG_WHITE)
+
+    def _style_axis(self, ax):
+        if getattr(ax, "name", "") != "polar":
+            ax.set_facecolor(BG_LIGHT)
+            ax.grid(True, alpha=0.35, linestyle="--")
+            ax.tick_params(axis="both", labelsize=11, colors=TEXT_MID)
+            for sp in ax.spines.values():
+                sp.set_edgecolor(BORDER2)
+                sp.set_linewidth(1.0)
+
+    def _style_all_axes(self):
+        self.fig.patch.set_facecolor(BG_WHITE)
+        for ax in self.fig.axes:
+            self._style_axis(ax)
+
+    def clear_all(self):
+        self.fig.clear()
+        self._build_axes()
+        self.coord_label.setText("图表已刷新：可使用工具栏进行缩放、平移和保存")
+        self.canvas.draw_idle()
+
+    def clear_fig(self):
+        self.fig.clear()
+        self.axes = []
+        self.coord_label.setText("图表已刷新：可使用工具栏进行缩放、平移和保存")
+        self.canvas.draw_idle()
+
+    def draw(self):
+        self._style_all_axes()
+        self.canvas.draw_idle()
+
+    def _on_motion(self, event):
+        if event.inaxes is not None and event.xdata is not None and event.ydata is not None:
+            self.coord_label.setText(f"当前坐标：x = {event.xdata:.3f}，y = {event.ydata:.3f}")
+        else:
+            self.coord_label.setText("提示：拖拽平移、框选缩放、Home 还原视图、Save 保存图表")
+
+    def _on_leave(self, event):
+        self.coord_label.setText("提示：使用工具栏可缩放/平移/保存图表，鼠标移入图表可查看坐标")
+
+
+class SignalProcessor:
+    """Signal processing helpers used by the analysis workflow."""
+
+    @staticmethod
+    def _safe_bandpass(signal, fs, lo=0.5, hi=8.0):
+        nyq = fs / 2.0
+        hi = min(hi, nyq * 0.95)
+        lo_n, hi_n = lo / nyq, hi / nyq
+        if lo_n <= 0 or lo_n >= hi_n:
+            return np.asarray(signal, dtype=float)
+        try:
+            b, a = butter(4, [lo_n, hi_n], btype="band")
+            return filtfilt(b, a, signal)
+        except Exception:
+            return np.asarray(signal, dtype=float)
+
+    @staticmethod
+    def preprocess(signal, fs):
+        s = np.asarray(signal, dtype=float).ravel()
+        if len(s) == 0:
+            return s
+        s = s - np.nanmean(s)
+        s = np.nan_to_num(s)
+        filtered = SignalProcessor._safe_bandpass(s, fs)
+
+        if HAS_PYWT and len(filtered) >= 32:
+            try:
+                coeffs = pywt.wavedec(filtered, "db4", level=min(5, pywt.dwt_max_level(len(filtered), pywt.Wavelet("db4").dec_len)))
+                sigma = np.median(np.abs(coeffs[-1])) / 0.6745 if len(coeffs[-1]) else 0
+                thr = sigma * np.sqrt(2 * np.log(max(len(filtered), 2)))
+                denoised = [coeffs[0]] + [pywt.threshold(c, thr, mode="soft") for c in coeffs[1:]]
+                filtered = pywt.waverec(denoised, "db4")[:len(filtered)]
+            except Exception:
+                pass
+
+        size = max(3, int(fs * 0.12))
+        if size % 2 == 0:
+            size += 1
+        try:
+            baseline = grey_closing(grey_opening(filtered, size=size), size=size)
+            filtered = filtered - baseline
+        except Exception:
+            pass
+
+        return filtered
+
+    @staticmethod
+    def detect_peaks(signal, fs, alpha=1.5, beta=0.5):
+        s = np.asarray(signal, dtype=float).ravel()
+        if len(s) < 3:
+            return np.array([], dtype=int)
+        height = np.mean(s) + beta * np.std(s)
+        prominence = max(np.std(s) * alpha * 0.15, np.ptp(s) * 0.04, 1e-8)
+        distance = max(1, int(0.35 * fs))
+        peaks, _ = find_peaks(s, height=height, prominence=prominence, distance=distance)
+        return peaks.astype(int)
+
+    @staticmethod
+    def find_onsets(signal, peaks, fs):
+        s = np.asarray(signal, dtype=float).ravel()
+        onsets = []
+        lookback = max(1, int(0.45 * fs))
+        for p in peaks:
+            start = max(0, int(p) - lookback)
+            if start < p:
+                onsets.append(start + int(np.argmin(s[start:int(p)])))
+        return np.array(onsets, dtype=int)
+
+    @staticmethod
+    def extract_features(signal, peaks, onsets, fs):
+        s = np.asarray(signal, dtype=float).ravel()
+        features = []
+        for i, p in enumerate(peaks):
+            p = int(p)
+            onset = int(onsets[i]) if i < len(onsets) else max(0, p - int(0.25 * fs))
+            next_onset = int(onsets[i + 1]) if i + 1 < len(onsets) else min(len(s) - 1, p + int(0.55 * fs))
+            prev_peak = int(peaks[i - 1]) if i > 0 else None
+            rr = (p - prev_peak) / fs if prev_peak is not None and p > prev_peak else None
+            heart_rate = round(60.0 / rr, 1) if rr and rr > 0 else "-"
+            amp = float(s[p] - np.min(s[onset:min(next_onset + 1, len(s))])) if len(s) else 0.0
+            rise = max(0.0, (p - onset) / fs)
+            fall = max(0.0, (next_onset - p) / fs)
+            features.append({
+                "heart_rate": heart_rate,
+                "amplitude": round(amp, 4),
+                "rise_time": round(rise, 3),
+                "fall_time": round(fall, 3),
+                "peak_idx": p,
+            })
+        return features
+
+    @staticmethod
+    def snr(raw, processed):
+        raw = np.asarray(raw, dtype=float).ravel()
+        processed = np.asarray(processed, dtype=float).ravel()
+        n = min(len(raw), len(processed))
+        if n == 0:
+            return 0
+        noise = raw[:n] - processed[:n]
+        val = 10 * np.log10((np.mean(processed[:n] ** 2) + 1e-12) / (np.mean(noise ** 2) + 1e-12))
+        return round(float(val), 2)
+
+    @staticmethod
+    def smoothness(signal):
+        s = np.asarray(signal, dtype=float).ravel()
+        if len(s) < 3:
+            return 0
+        val = 1.0 / (1.0 + np.mean(np.abs(np.diff(s, n=2))))
+        return round(float(val), 4)
+
+
+class PulseRecognizer:
+    TYPES = {
+        "ping": {"name": "平脉", "color": "#1565C0", "tcm": "气血调和，脏腑功能平衡。"},
+        "chi": {"name": "迟脉", "color": "#5C6BC0", "tcm": "多见寒证，或阳气不足。"},
+        "shu": {"name": "数脉", "color": "#C62828", "tcm": "多见热证，或阴虚内热。"},
+        "fu": {"name": "浮脉", "color": "#E65100", "tcm": "多见表证，外感初起。"},
+        "chen": {"name": "沉脉", "color": "#2E7D32", "tcm": "多见里证，气血内郁。"},
+        "hua": {"name": "滑脉", "color": "#00897B", "tcm": "多见痰湿、食积，亦可见于妊娠。"},
+        "se": {"name": "涩脉", "color": "#6D4C41", "tcm": "多见血瘀、精伤、津亏。"},
+        "xian": {"name": "弦脉", "color": "#7B1FA2", "tcm": "多见肝胆病、痛证或痰饮。"},
+    }
+
+    @staticmethod
+    def _score(value, target, width):
+        return max(0.0, 100.0 - abs(value - target) / max(width, 1e-8) * 100.0)
+
+    @staticmethod
+    def score(hr, amp, cv, rt, slope, cun_r, chi_r, rr_std):
+        scores = {
+            "ping": 0.35 * PulseRecognizer._score(hr, 72, 28) + 0.30 * PulseRecognizer._score(cv, 0.08, 0.20) + 0.35 * PulseRecognizer._score(rr_std, 0.04, 0.16),
+            "chi": PulseRecognizer._score(hr, 52, 22),
+            "shu": PulseRecognizer._score(hr, 102, 32),
+            "fu": 0.55 * PulseRecognizer._score(cun_r, 0.48, 0.25) + 0.45 * PulseRecognizer._score(amp, max(amp, 0.08), 0.18),
+            "chen": 0.55 * PulseRecognizer._score(chi_r, 0.48, 0.25) + 0.45 * PulseRecognizer._score(amp, 0.04, 0.12),
+            "hua": 0.50 * PulseRecognizer._score(cv, 0.06, 0.16) + 0.50 * PulseRecognizer._score(rr_std, 0.03, 0.14),
+            "se": 0.55 * min(100.0, cv * 260.0) + 0.45 * min(100.0, rr_std * 520.0),
+            "xian": 0.60 * min(100.0, slope * 18.0) + 0.40 * PulseRecognizer._score(rt, 0.12, 0.20),
+        }
+        return {k: int(round(max(0, min(100, v)))) for k, v in scores.items()}
 
 
 
@@ -359,15 +606,15 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         main = QHBoxLayout(central)
-        main.setContentsMargins(8,8,8,8)
-        main.setSpacing(8)
+        main.setContentsMargins(12,12,12,12)
+        main.setSpacing(12)
 
         main.addWidget(self._build_panel(), 0)
 
         right = QWidget()
         rl = QVBoxLayout(right)
         rl.setContentsMargins(0,0,0,0)
-        rl.setSpacing(6)
+        rl.setSpacing(10)
         rl.addWidget(self._build_topbar())
 
         self.tabs = QTabWidget()
@@ -383,7 +630,7 @@ class MainWindow(QMainWindow):
     # ---- 顶部统计条 ----
     def _build_topbar(self):
         bar = QWidget()
-        bar.setFixedHeight(68)
+        bar.setFixedHeight(86)
         bar.setStyleSheet(f"""
             background: qlineargradient(x1:0,y1:0,x2:1,y2:0,
                 stop:0 {'#E3F2FD'}, stop:0.5 {'#DDEEFF'}, stop:1 {'#E3F2FD'});
@@ -391,7 +638,7 @@ class MainWindow(QMainWindow):
             border: 1px solid {'#90CAF9'};
         """)
         lo = QHBoxLayout(bar)
-        lo.setContentsMargins(20,6,20,6)
+        lo.setContentsMargins(24,8,24,8)
 
         stats = [
             ("数据来源", "—",       '#1565C0'),
@@ -406,12 +653,12 @@ class MainWindow(QMainWindow):
             w = QWidget()
             wl = QVBoxLayout(w)
             wl.setContentsMargins(6,2,6,2)
-            wl.setSpacing(1)
+            wl.setSpacing(3)
             n_lbl = QLabel(name)
-            n_lbl.setStyleSheet(f"color:{'#7A9BC0'};font-size:10px;")
+            n_lbl.setStyleSheet(f"color:{'#34567A'};font-size:14px;")
             n_lbl.setAlignment(Qt.AlignCenter)
             v_lbl = QLabel(default)
-            v_lbl.setStyleSheet(f"color:{color};font-size:15px;font-weight:bold;")
+            v_lbl.setStyleSheet(f"color:{color};font-size:20px;font-weight:bold;")
             v_lbl.setAlignment(Qt.AlignCenter)
             wl.addWidget(n_lbl)
             wl.addWidget(v_lbl)
@@ -432,27 +679,27 @@ class MainWindow(QMainWindow):
     # ---- 左侧控制面板 ----
     def _build_panel(self):
         panel = QWidget()
-        panel.setFixedWidth(250)
+        panel.setFixedWidth(300)
         panel.setStyleSheet(f"""
             QWidget{{background:{'#F0F6FF'};border-radius:10px;}}
         """)
         lo = QVBoxLayout(panel)
-        lo.setContentsMargins(12,12,12,12)
-        lo.setSpacing(8)
+        lo.setContentsMargins(16,16,16,16)
+        lo.setSpacing(10)
 
         # 标题
-        title = QLabel("🫀 脉象分析系统")
+        title = QLabel("脉象分析系统")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet(f"""
-            font-size:15px;font-weight:bold;
-            color:{'#1565C0'};padding:10px 0 4px 0;
+            font-size:24px;font-weight:bold;
+            color:{'#1565C0'};padding:12px 0 6px 0;
             border-bottom:1px solid {'#90CAF9'};
         """)
         lo.addWidget(title)
 
         sub = QLabel("软件工程  202228034130  任妍婕")
         sub.setAlignment(Qt.AlignCenter)
-        sub.setStyleSheet(f"color:{'#7A9BC0'};font-size:10px;padding-bottom:4px;")
+        sub.setStyleSheet(f"color:{'#34567A'};font-size:14px;padding-bottom:6px;")
         lo.addWidget(sub)
 
         # ---- 数据模式选择 ----
@@ -473,7 +720,7 @@ class MainWindow(QMainWindow):
         p0 = QWidget()
         p0l = QVBoxLayout(p0)
         p0l.setContentsMargins(0,0,0,0)
-        p0l.setSpacing(4)
+        p0l.setSpacing(8)
         p0l.addWidget(QLabel("选择受试者:"))
         self.subject_cb = QComboBox()
         self.subject_cb.addItems([f"bidmc{i:02d}" for i in range(1,54)])
@@ -491,7 +738,7 @@ class MainWindow(QMainWindow):
         p1 = QWidget()
         p1l = QVBoxLayout(p1)
         p1l.setContentsMargins(0,0,0,0)
-        p1l.setSpacing(4)
+        p1l.setSpacing(8)
         self.custom_btns = {}
         self.custom_lbls = {}
         for part in ['寸', '关', '尺']:
@@ -499,10 +746,10 @@ class MainWindow(QMainWindow):
             rl = QHBoxLayout(row)
             rl.setContentsMargins(0,0,0,0)
             btn = QPushButton(f"📂 {part}部")
-            btn.setFixedWidth(72)
+            btn.setFixedWidth(86)
             btn.clicked.connect(lambda checked,p=part: self._load_custom_file(p))
             lbl = QLabel("未选择")
-            lbl.setStyleSheet(f"color:{'#7A9BC0'};font-size:10px;")
+            lbl.setStyleSheet(f"color:{'#34567A'};font-size:14px;")
             lbl.setWordWrap(True)
             rl.addWidget(btn)
             rl.addWidget(lbl)
@@ -531,7 +778,7 @@ class MainWindow(QMainWindow):
         # 信息显示
         self.info_lbl = QLabel("尚未加载数据")
         self.info_lbl.setStyleSheet(f"""
-            color:{'#7A9BC0'};font-size:10px;
+            color:{'#34567A'};font-size:14px;
             background:{'#E3F2FD'};border-radius:4px;
             border:1px solid {'#BBDEFB'};
             padding:6px;
@@ -542,7 +789,7 @@ class MainWindow(QMainWindow):
         # ---- 预处理参数 ----
         pre_grp = QGroupBox("🔬  预处理参数")
         pg = QGridLayout(pre_grp)
-        pg.setSpacing(5)
+        pg.setSpacing(8)
         pg.addWidget(QLabel("小波基:"), 0, 0)
         self.wav_cb = QComboBox()
         self.wav_cb.addItems(['db4','db6','sym4','coif2'])
@@ -560,7 +807,7 @@ class MainWindow(QMainWindow):
         # ---- 检测参数 ----
         det_grp = QGroupBox("📌  检测参数")
         dg = QGridLayout(det_grp)
-        dg.setSpacing(5)
+        dg.setSpacing(8)
         dg.addWidget(QLabel("α (均值权重):"), 0, 0)
         self.alpha_sp = QDoubleSpinBox()
         self.alpha_sp.setRange(0.5,3.0); self.alpha_sp.setSingleStep(0.1)
@@ -600,35 +847,35 @@ class MainWindow(QMainWindow):
     # ---- 标签页 ----
     def _tab_raw(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(4,4,4,4)
-        self.cv_raw = Canvas(1, 2, (14,5))
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
+        self.cv_raw = Canvas(1, 2, (14,5.6))
         l.addWidget(self.cv_raw)
         return w
 
     def _tab_preprocess(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(4,4,4,4)
-        self.cv_pre = Canvas(2, 2, (14,8))
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
+        self.cv_pre = Canvas(2, 2, (14,8.4))
         l.addWidget(self.cv_pre, 3)
-        self.pre_tbl = self._make_table(4, ["算法","SNR(dB)↑","平滑度↑","基线去除","综合"], 110)
+        self.pre_tbl = self._make_table(4, ["算法","SNR(dB)↑","平滑度↑","基线去除","综合"], 170)
         l.addWidget(self.pre_tbl, 1)
         return w
 
     def _tab_features(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(4,4,4,4)
-        self.cv_feat1 = Canvas(1, 2, (14,4))
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
+        self.cv_feat1 = Canvas(1, 2, (14,4.4))
         l.addWidget(self.cv_feat1, 2)
-        self.cv_feat2 = Canvas(1, 3, (14,3))
+        self.cv_feat2 = Canvas(1, 3, (14,3.4))
         l.addWidget(self.cv_feat2, 1)
-        self.feat_tbl = self._make_table(0, ["周期","脉率(次/分)","主波幅度","上升时间(s)","下降时间(s)","波峰位置"], 130)
+        self.feat_tbl = self._make_table(0, ["周期","脉率(次/分)","主波幅度","上升时间(s)","下降时间(s)","波峰位置"], 190)
         l.addWidget(self.feat_tbl, 1)
         return w
 
     def _tab_compare(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(4,4,4,4)
-        self.cv_cmp = Canvas(1, 3, (14,5))
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
+        self.cv_cmp = Canvas(1, 3, (14,5.6))
         l.addWidget(self.cv_cmp, 2)
         self.cmp_tbl = self._make_table(4, ["算法","检测数","准确率(%)↑","误检率(%)↓","漏检率(%)↓"])
         l.addWidget(self.cmp_tbl, 1)
@@ -636,17 +883,17 @@ class MainWindow(QMainWindow):
 
     def _tab_cgc(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(4,4,4,4)
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
 
         # 自采数据时显示真实三部位，否则频带分解
         self.cgc_mode_lbl = QLabel("当前模式：频带分解模拟（切换至自采数据模式可显示真实三部位）")
-        self.cgc_mode_lbl.setStyleSheet(f"color:{'#E65100'};font-size:11px;padding:4px 8px;"
+        self.cgc_mode_lbl.setStyleSheet(f"color:{'#E65100'};font-size:14px;padding:8px 12px;"
                                         f"background:{'#E3F2FD'};border-radius:4px;")
         l.addWidget(self.cgc_mode_lbl)
 
-        self.cv_cgc1 = Canvas(1, 3, (14,3.5))
+        self.cv_cgc1 = Canvas(1, 3, (14,3.9))
         l.addWidget(self.cv_cgc1, 2)
-        self.cv_cgc2 = Canvas(1, 2, (14,3.5))
+        self.cv_cgc2 = Canvas(1, 2, (14,3.9))
         l.addWidget(self.cv_cgc2, 2)
 
         row = QWidget()
@@ -660,7 +907,7 @@ class MainWindow(QMainWindow):
 
     def _tab_recog(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(4,4,4,4)
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
 
         # 结果卡片
         self.rec_card = self._make_rec_card()
@@ -668,8 +915,8 @@ class MainWindow(QMainWindow):
 
         mid = QWidget()
         ml = QHBoxLayout(mid); ml.setContentsMargins(0,0,0,0); ml.setSpacing(8)
-        self.cv_rec_bar   = Canvas(figsize=(9,4))
-        self.cv_rec_radar = Canvas(figsize=(5,4))
+        self.cv_rec_bar   = Canvas(figsize=(9,4.3))
+        self.cv_rec_radar = Canvas(figsize=(5,4.3))
         bg = QGroupBox("📊 各脉象匹配度")
         bg.setStyleSheet(self._grp())
         bgl = QVBoxLayout(bg); bgl.addWidget(self.cv_rec_bar)
@@ -686,7 +933,7 @@ class MainWindow(QMainWindow):
 
     def _make_rec_card(self):
         card = QWidget()
-        card.setFixedHeight(88)
+        card.setFixedHeight(116)
         card.setStyleSheet(f"""
             background: qlineargradient(x1:0,y1:0,x2:1,y2:0,
                 stop:0 {'#E3F2FD'}, stop:1 {'#DDEEFF'});
@@ -698,7 +945,7 @@ class MainWindow(QMainWindow):
         lo.setSpacing(24)
 
         self.rec_name  = QLabel("— 待识别 —")
-        self.rec_name.setStyleSheet(f"font-size:26px;font-weight:bold;color:{'#1565C0'};")
+        self.rec_name.setStyleSheet(f"font-size:30px;font-weight:bold;color:{'#1565C0'};")
         self.rec_name.setAlignment(Qt.AlignCenter)
         lo.addWidget(self.rec_name, 1)
 
@@ -708,10 +955,10 @@ class MainWindow(QMainWindow):
 
         sw = QWidget(); sl = QVBoxLayout(sw); sl.setContentsMargins(0,0,0,0)
         QLabel_s = QLabel("匹配分数")
-        QLabel_s.setStyleSheet(f"color:{'#7A9BC0'};font-size:10px;")
+        QLabel_s.setStyleSheet(f"color:{'#34567A'};font-size:14px;")
         QLabel_s.setAlignment(Qt.AlignCenter)
         self.rec_score = QLabel("—")
-        self.rec_score.setStyleSheet(f"font-size:24px;font-weight:bold;color:{'#2E7D32'};")
+        self.rec_score.setStyleSheet(f"font-size:28px;font-weight:bold;color:{'#2E7D32'};")
         self.rec_score.setAlignment(Qt.AlignCenter)
         sl.addWidget(QLabel_s); sl.addWidget(self.rec_score)
         lo.addWidget(sw)
@@ -721,7 +968,7 @@ class MainWindow(QMainWindow):
         lo.addWidget(sep2)
 
         self.rec_desc = QLabel("请完成「特征提取」后，系统将自动识别脉象类型")
-        self.rec_desc.setStyleSheet(f"color:{'#0D2137'};font-size:12px;")
+        self.rec_desc.setStyleSheet(f"color:{'#0D2137'};font-size:16px;")
         self.rec_desc.setWordWrap(True)
         lo.addWidget(self.rec_desc, 3)
 
@@ -731,9 +978,9 @@ class MainWindow(QMainWindow):
 
         tw = QWidget(); tl = QVBoxLayout(tw); tl.setContentsMargins(0,0,0,0)
         QLabel_t = QLabel("中医主治")
-        QLabel_t.setStyleSheet(f"color:{'#7A9BC0'};font-size:10px;")
+        QLabel_t.setStyleSheet(f"color:{'#34567A'};font-size:14px;")
         self.rec_tcm = QLabel("—")
-        self.rec_tcm.setStyleSheet(f"color:{'#E65100'};font-size:11px;")
+        self.rec_tcm.setStyleSheet(f"color:{'#E65100'};font-size:15px;")
         self.rec_tcm.setWordWrap(True)
         tl.addWidget(QLabel_t); tl.addWidget(self.rec_tcm)
         lo.addWidget(tw, 2)
@@ -744,6 +991,12 @@ class MainWindow(QMainWindow):
         t.setHorizontalHeaderLabels(headers)
         t.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         t.verticalHeader().setVisible(False)
+        t.setAlternatingRowColors(True)
+        t.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        t.setSelectionBehavior(QAbstractItemView.SelectRows)
+        t.setSelectionMode(QAbstractItemView.SingleSelection)
+        t.setMinimumHeight(min(max_h, 150) if max_h else 150)
+        t.verticalHeader().setDefaultSectionSize(36)
         if max_h: t.setMaximumHeight(max_h)
         return t
 
@@ -751,7 +1004,7 @@ class MainWindow(QMainWindow):
         return f"""
             QGroupBox{{border:1px solid {'#90CAF9'};border-radius:8px;
             margin-top:12px;padding-top:8px;color:{'#1565C0'};
-            font-weight:bold;font-size:12px;}}
+            font-weight:bold;font-size:15px;}}
             QGroupBox::title{{subcontrol-origin:margin;left:12px;top:-7px;
             padding:0 6px;background:{'#FFFFFF'};}}
         """
@@ -802,7 +1055,7 @@ class MainWindow(QMainWindow):
             self.custom_paths[part] = path
             fname = os.path.basename(path)
             self.custom_lbls[part].setText(fname)
-            self.custom_lbls[part].setStyleSheet(f"color:{'#2E7D32'};font-size:10px;")
+            self.custom_lbls[part].setStyleSheet(f"color:{'#2E7D32'};font-size:14px;")
 
     def _load_custom(self):
         # 检查至少有脉搏数据（用寸部作为主信号，或任意一个）
@@ -829,7 +1082,7 @@ class MainWindow(QMainWindow):
                                    f"主信号({main_part}部): {len(self.signal_raw)}点 ({n_sec:.1f}秒)")
             self._upd(数据来源="自采数据", 采样率=f"{self.fs}Hz")
             self.cgc_mode_lbl.setText(f"✅ 自采模式：已加载真实{parts_info}数据，直接展示原始三部位信号！")
-            self.cgc_mode_lbl.setStyleSheet(f"color:{'#2E7D32'};font-size:11px;padding:4px 8px;"
+            self.cgc_mode_lbl.setStyleSheet(f"color:{'#2E7D32'};font-size:14px;padding:8px 12px;"
                                              f"background:{'#E3F2FD'};border-radius:4px;")
             self.statusBar().showMessage(f"✅ 自采数据加载成功（{parts_info}）— 请点击「运行预处理」")
             self._plot_raw()
@@ -850,7 +1103,7 @@ class MainWindow(QMainWindow):
         ax0 = c.axes[0]
         ax0.plot(t, self.signal_raw, color='#1565C0', lw=0.9, alpha=0.9, label='原始脉搏波')
         ax0.fill_between(t, self.signal_raw, alpha=0.08, color='#1565C0')
-        ax0.set_title('原始脉搏波信号（时域）', color='#0D2137', fontsize=12, pad=8)
+        ax0.set_title('原始脉搏波信号（时域）', color='#0D2137', fontsize=15, pad=10)
         ax0.set_xlabel('时间 (s)', color='#34567A')
         ax0.set_ylabel('幅值', color='#34567A')
         ax0.legend(); ax0.set_xlim(0, t[-1])
@@ -863,7 +1116,7 @@ class MainWindow(QMainWindow):
         # 脉搏主频带
         f_lo, f_hi = 0.5, min(4.0, self.fs/2-0.1)
         ax1.axvspan(f_lo, f_hi, alpha=0.12, color='#2E7D32', label=f'脉搏主频({f_lo}~{f_hi}Hz)')
-        ax1.set_title('功率谱密度（Welch法）', color='#0D2137', fontsize=12, pad=8)
+        ax1.set_title('功率谱密度（Welch法）', color='#0D2137', fontsize=15, pad=10)
         ax1.set_xlabel('频率 (Hz)', color='#34567A')
         ax1.set_ylabel('PSD', color='#34567A')
         ax1.legend(); ax1.set_xlim(0, min(10, self.fs/2))
@@ -918,8 +1171,8 @@ class MainWindow(QMainWindow):
             ax.plot(t, raw, color='#7A9BC0', lw=0.5, alpha=0.4, label='原始')
             ax.plot(t, sig[:len(t)], color=color, lw=1.0, label='处理后')
             snr = SignalProcessor.snr(raw, sig[:len(raw)])
-            ax.set_title(f'{title}  |  SNR={snr}dB', color='#0D2137', fontsize=10, pad=5)
-            ax.set_xlabel('时间(s)', fontsize=8); ax.legend(fontsize=7)
+            ax.set_title(f'{title}  |  SNR={snr}dB', color='#0D2137', fontsize=13, pad=7)
+            ax.set_xlabel('时间(s)', fontsize=11); ax.legend(fontsize=10)
             ax.set_xlim(0, t[-1])
 
         c.fig.tight_layout(pad=2.0); c.draw()
@@ -970,9 +1223,9 @@ class MainWindow(QMainWindow):
         if len(onsets) > 0:
             ax0.scatter(onsets/fs, sig[onsets], color='#E65100', s=35, zorder=5,
                         marker='o', label=f'起点({len(onsets)}个)', edgecolors='white', lw=0.5)
-        ax0.set_title('波峰检测结果（红▲波峰 · 橙●起点）', color='#0D2137', fontsize=11, pad=6)
+        ax0.set_title('波峰检测结果（红▲波峰 · 橙●起点）', color='#0D2137', fontsize=14, pad=8)
         ax0.set_xlabel('时间(s)'); ax0.set_ylabel('幅值')
-        ax0.legend(fontsize=8); ax0.set_xlim(0, t[-1])
+        ax0.legend(fontsize=11); ax0.set_xlim(0, t[-1])
 
         # 单周期叠加
         ax1 = c1.axes[1]
@@ -995,9 +1248,9 @@ class MainWindow(QMainWindow):
                 ax1.plot(x, mc, color='#C62828', lw=2.5, label='平均波形', zorder=5)
                 ax1.fill_between(x, mc-sc, mc+sc, alpha=0.2, color='#C62828', label='±1σ')
         ax1.set_title(f'单周期叠加（共{len(cycles) if len(peaks)>=3 else 0}个周期，归一化）',
-                      color='#0D2137', fontsize=11, pad=6)
+                      color='#0D2137', fontsize=14, pad=8)
         ax1.set_xlabel('归一化时间'); ax1.set_ylabel('归一化幅值')
-        ax1.legend(fontsize=8)
+        ax1.legend(fontsize=11)
         c1.fig.tight_layout(pad=2.0); c1.draw()
 
         # 趋势图
@@ -1017,10 +1270,10 @@ class MainWindow(QMainWindow):
                 ax.plot(x, vals, color=color, lw=1.5, marker='o', ms=3)
                 ax.axhline(np.mean(vals), color=color, lw=1, ls='--', alpha=0.5,
                            label=f'均值={np.mean(vals):.2f}')
-                ax.set_title(title, color='#0D2137', fontsize=10)
-                ax.set_xlabel('周期序号', fontsize=8)
-                ax.set_ylabel(label, fontsize=8)
-                ax.legend(fontsize=7)
+                ax.set_title(title, color='#0D2137', fontsize=13)
+                ax.set_xlabel('周期序号', fontsize=11)
+                ax.set_ylabel(label, fontsize=11)
+                ax.legend(fontsize=10)
         c2.fig.tight_layout(pad=1.5); c2.draw()
 
         # 特征表格
@@ -1123,9 +1376,9 @@ class MainWindow(QMainWindow):
             for bar, val in zip(bars, vals):
                 ax.text(bar.get_x()+bar.get_width()/2, bar.get_height()+1.5,
                         f'{val}%', ha='center', va='bottom',
-                        fontsize=10, color='#0D2137', fontweight='bold')
+                        fontsize=12, color='#0D2137', fontweight='bold')
             bars[0].set_edgecolor('#2E7D32'); bars[0].set_linewidth(2.5)
-            ax.set_title(metric, color='#0D2137', fontsize=12, pad=8)
+            ax.set_title(metric, color='#0D2137', fontsize=15, pad=10)
             ax.set_ylim(0, 118)
             ax.tick_params(axis='x', labelsize=9, colors='#34567A')
 
@@ -1193,8 +1446,8 @@ class MainWindow(QMainWindow):
             if self.peaks is not None:
                 valid = self.peaks[self.peaks < len(s)]
                 ax.scatter(valid/fs, s[valid], color='white', s=20, zorder=5, alpha=0.8)
-            ax.set_title(zh_name.get(name, name), color='#0D2137', fontsize=10, pad=4)
-            ax.set_xlabel('时间(s)', fontsize=8); ax.set_ylabel('幅值', fontsize=8)
+            ax.set_title(zh_name.get(name, name), color='#0D2137', fontsize=13, pad=6)
+            ax.set_xlabel('时间(s)', fontsize=11); ax.set_ylabel('幅值', fontsize=11)
             ax.set_xlim(0, t[-1])
         c1.fig.tight_layout(pad=1.5); c1.draw()
 
@@ -1216,9 +1469,9 @@ class MainWindow(QMainWindow):
                     mc = np.mean(cycs,axis=0)
                     ax_cy.plot(np.linspace(0,1,len(mc)), mc, color=colors[name],
                                lw=2, label=zh_name.get(name,name))
-        ax_cy.set_title('三部位平均波形对比（归一化）', color='#0D2137', fontsize=11, pad=6)
+        ax_cy.set_title('三部位平均波形对比（归一化）', color='#0D2137', fontsize=14, pad=8)
         ax_cy.set_xlabel('归一化时间'); ax_cy.set_ylabel('归一化幅值')
-        ax_cy.legend(fontsize=8)
+        ax_cy.legend(fontsize=11)
 
         # ---- 雷达图 ----
         ax_r = c2.axes[1]
@@ -1258,14 +1511,14 @@ class MainWindow(QMainWindow):
             ax_radar.fill(angles, v_closed, color=colors[name], alpha=0.12)
 
         ax_radar.set_xticks(angles[:-1])
-        ax_radar.set_xticklabels(cats, color='#0D2137', fontsize=8)
+        ax_radar.set_xticklabels(cats, color='#0D2137', fontsize=11)
         ax_radar.set_yticks([0.25,0.5,0.75,1.0])
-        ax_radar.set_yticklabels(['','','',''], fontsize=6)
+        ax_radar.set_yticklabels(['','','',''], fontsize=9)
         ax_radar.set_ylim(0,1.0)
         ax_radar.spines['polar'].set_color('#90CAF9')
         ax_radar.grid(color='#90CAF9', lw=0.5, alpha=0.5)
-        ax_radar.set_title('三部位特征雷达图', color='#0D2137', fontsize=10, pad=12)
-        ax_radar.legend(loc='lower right', bbox_to_anchor=(1.35,-0.1), fontsize=8)
+        ax_radar.set_title('三部位特征雷达图', color='#0D2137', fontsize=13, pad=14)
+        ax_radar.legend(loc='lower right', bbox_to_anchor=(1.35,-0.1), fontsize=10)
 
         c2.fig.tight_layout(pad=1.5); c2.draw()
 
@@ -1353,7 +1606,7 @@ class MainWindow(QMainWindow):
 
         # 更新卡片
         self.rec_name.setText(f"{top_info['name']}  ({conf})")
-        self.rec_name.setStyleSheet(f"font-size:24px;font-weight:bold;color:{top_info['color']};")
+        self.rec_name.setStyleSheet(f"font-size:30px;font-weight:bold;color:{top_info['color']};")
         self.rec_score.setText(f"{top_score} 分")
         self.rec_desc.setText(desc_map.get(top_key,''))
         self.rec_tcm.setText(top_info['tcm'])
@@ -1376,13 +1629,13 @@ class MainWindow(QMainWindow):
         for bar,sc in zip(bars, scores_r):
             ax.text(min(sc+1.5,97), bar.get_y()+bar.get_height()/2,
                     f'{sc}分', va='center', ha='left',
-                    color='#0D2137', fontsize=9, fontweight='bold')
+                    color='#0D2137', fontsize=11, fontweight='bold')
         ax.axvline(60, color='#7A9BC0',   lw=1, ls='--', alpha=0.5)
         ax.axvline(80, color='#2E7D32',    lw=1, ls='--', alpha=0.5)
-        ax.text(61,-0.5,'60分',color='#7A9BC0',fontsize=7,va='top')
-        ax.text(81,-0.5,'80分',color='#2E7D32',fontsize=7,va='top')
+        ax.text(61,-0.5,'60分',color='#7A9BC0',fontsize=10,va='top')
+        ax.text(81,-0.5,'80分',color='#2E7D32',fontsize=10,va='top')
         ax.set_xlim(0,105); ax.set_xlabel('匹配分数', color='#34567A')
-        ax.set_title('八种脉象匹配度排行', color='#0D2137', fontsize=11, pad=8)
+        ax.set_title('八种脉象匹配度排行', color='#0D2137', fontsize=14, pad=10)
         ax.tick_params(colors='#34567A')
         ax.grid(axis='x', alpha=0.3, ls='--')
         c.fig.tight_layout(pad=1.5); c.draw()
@@ -1411,13 +1664,13 @@ class MainWindow(QMainWindow):
         ax2.plot(ang6, ref, color='#7A9BC0', lw=1, ls='--', alpha=0.5, label='平脉基准')
 
         ax2.set_xticks(ang6[:-1])
-        ax2.set_xticklabels(cats6, color='#0D2137', fontsize=8)
+        ax2.set_xticklabels(cats6, color='#0D2137', fontsize=11)
         ax2.set_yticks([0.25,0.5,0.75,1.0])
-        ax2.set_yticklabels(['','','',''], fontsize=6)
+        ax2.set_yticklabels(['','','',''], fontsize=9)
         ax2.set_ylim(0,1); ax2.spines['polar'].set_color('#90CAF9')
         ax2.grid(color='#90CAF9', lw=0.5, alpha=0.5)
-        ax2.set_title(f'特征分布\n（{top_info["name"]}）', color='#0D2137', fontsize=10, pad=12)
-        ax2.legend(loc='lower right', bbox_to_anchor=(1.3,-0.1), fontsize=7)
+        ax2.set_title(f'特征分布\n（{top_info["name"]}）', color='#0D2137', fontsize=13, pad=14)
+        ax2.legend(loc='lower right', bbox_to_anchor=(1.3,-0.1), fontsize=10)
         c2.fig.tight_layout(); c2.draw()
 
         # 结果表格
@@ -1437,7 +1690,7 @@ class MainWindow(QMainWindow):
             if i==0:
                 for j in range(5):
                     it = self.rec_tbl.item(i,j)
-                    if it: it.setBackground(QColor(20,50,30))
+                    if it: it.setBackground(QColor('#E3F2FD'))
 
     # ==================== 保存图表 ====================
     def _save_all(self):
