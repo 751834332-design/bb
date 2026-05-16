@@ -226,8 +226,8 @@ QPushButton#danger:disabled {
 QGroupBox {
     border: 2px solid #90CAF9;
     border-radius: 12px;
-    margin-top: 24px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding-top: 34px;
     background: #F0F6FF;
     color: #1565C0;
     font-weight: bold;
@@ -235,10 +235,13 @@ QGroupBox {
 }
 QGroupBox::title {
     subcontrol-origin: margin;
-    left: 16px;
-    top: -12px;
-    padding: 2px 10px;
+    subcontrol-position: top left;
+    left: 18px;
+    top: 4px;
+    padding: 4px 14px;
     background: #FFFFFF;
+    border: 1px solid #BBDEFB;
+    border-radius: 5px;
     color: #1565C0;
     font-size: 16px;
     font-weight: bold;
