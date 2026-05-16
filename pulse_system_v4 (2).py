@@ -121,26 +121,29 @@ QMainWindow, QWidget {
     background: #FFFFFF;
     color: #0D2137;
     font-family: 'Microsoft YaHei', 'SimHei';
-    font-size: 16px;
+    font-size: 15px;
 }
 
 /* ===== 标签页 ===== */
 QTabWidget::pane {
     border: 2px solid #90CAF9;
     background: #FFFFFF;
-    border-radius: 6px;
+    border-radius: 12px;
+    margin-top: 6px;
 }
 QTabBar::tab {
     background: #E3F2FD;
     color: #34567A;
-    padding: 14px 30px;
+    padding: 12px 22px;
     border: 1px solid #90CAF9;
     border-bottom: none;
-    margin-right: 3px;
+    margin-right: 6px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
+    min-width: 108px;
+    min-height: 28px;
 }
 QTabBar::tab:selected {
     background: #FFFFFF;
@@ -158,9 +161,10 @@ QPushButton {
     color: #0D2137;
     border: 2px solid #90CAF9;
     border-radius: 8px;
-    padding: 12px 18px;
-    font-size: 16px;
+    padding: 10px 16px;
+    font-size: 15px;
     font-weight: bold;
+    min-height: 34px;
 }
 QPushButton:hover {
     background: #1976D2;
@@ -171,7 +175,7 @@ QPushButton#primary {
     background: #1565C0;
     color: #FFFFFF;
     border: none;
-    font-size: 17px;
+    font-size: 16px;
 }
 QPushButton#primary:hover {
     background: #1976D2;
@@ -180,7 +184,7 @@ QPushButton#gold {
     background: #E65100;
     color: #FFFFFF;
     border: none;
-    font-size: 17px;
+    font-size: 16px;
 }
 QPushButton#gold:hover {
     background: #F57C00;
@@ -189,7 +193,7 @@ QPushButton#danger {
     background: #C62828;
     color: #FFFFFF;
     border: none;
-    font-size: 16px;
+    font-size: 15px;
 }
 QPushButton#danger:hover {
     background: #E53935;
@@ -198,9 +202,9 @@ QPushButton#danger:hover {
 /* ===== 分组框 ===== */
 QGroupBox {
     border: 2px solid #90CAF9;
-    border-radius: 10px;
-    margin-top: 18px;
-    padding-top: 16px;
+    border-radius: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
     background: #F0F6FF;
     color: #1565C0;
     font-weight: bold;
@@ -208,9 +212,9 @@ QGroupBox {
 }
 QGroupBox::title {
     subcontrol-origin: margin;
-    left: 14px;
-    top: -9px;
-    padding: 0 8px;
+    left: 16px;
+    top: -12px;
+    padding: 2px 10px;
     background: #FFFFFF;
     color: #1565C0;
     font-size: 16px;
@@ -223,9 +227,10 @@ QComboBox, QSpinBox, QDoubleSpinBox {
     color: #0D2137;
     border: 2px solid #90CAF9;
     border-radius: 6px;
-    padding: 8px 12px;
+    padding: 7px 10px;
     font-size: 15px;
     min-height: 34px;
+    min-width: 120px;
 }
 QComboBox:hover, QSpinBox:hover, QDoubleSpinBox:hover {
     border: 2px solid #1565C0;
@@ -241,8 +246,9 @@ QComboBox QAbstractItemView {
 /* ===== 单选按钮 ===== */
 QRadioButton {
     color: #0D2137;
-    font-size: 16px;
-    spacing: 8px;
+    font-size: 15px;
+    spacing: 10px;
+    min-height: 28px;
 }
 QRadioButton::indicator {
     width: 18px;
@@ -285,7 +291,7 @@ QTableWidget::item:alternate {
 /* ===== 标签 ===== */
 QLabel {
     color: #0D2137;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 /* ===== 进度条 ===== */
@@ -330,6 +336,14 @@ QLabel#coordLabel {
     border-radius: 6px;
     padding: 5px 8px;
     font-size: 13px;
+}
+
+QScrollArea {
+    background: #FFFFFF;
+    border: none;
+}
+QScrollArea > QWidget > QWidget {
+    background: #F0F6FF;
 }
 
 /* ===== 滚动条 ===== */
@@ -578,7 +592,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("脉搏脉象可视化分析系统 V3.0  ·  任妍婕  202228034130")
-        self.setMinimumSize(1400, 850)
+        self.setMinimumSize(1280, 820)
         self.resize(1600, 950)
 
         # 数据状态
@@ -606,39 +620,49 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         main = QHBoxLayout(central)
-        main.setContentsMargins(12,12,12,12)
-        main.setSpacing(12)
+        main.setContentsMargins(14,14,14,14)
+        main.setSpacing(0)
 
-        main.addWidget(self._build_panel(), 0)
+        splitter = QSplitter(Qt.Horizontal)
+        splitter.setChildrenCollapsible(False)
+        splitter.setHandleWidth(10)
 
         right = QWidget()
         rl = QVBoxLayout(right)
-        rl.setContentsMargins(0,0,0,0)
-        rl.setSpacing(10)
+        rl.setContentsMargins(12,0,0,0)
+        rl.setSpacing(12)
         rl.addWidget(self._build_topbar())
 
         self.tabs = QTabWidget()
-        self.tabs.addTab(self._tab_raw(),        "📈  原始信号")
-        self.tabs.addTab(self._tab_preprocess(), "🔬  预处理对比")
-        self.tabs.addTab(self._tab_features(),   "📌  特征提取")
-        self.tabs.addTab(self._tab_compare(),    "📊  算法对比")
-        self.tabs.addTab(self._tab_cgc(),        "☯  寸关尺分析")
-        self.tabs.addTab(self._tab_recog(),      "🧠  脉象识别")
+        self.tabs.tabBar().setExpanding(False)
+        self.tabs.tabBar().setUsesScrollButtons(True)
+        self.tabs.tabBar().setElideMode(Qt.ElideNone)
+        self.tabs.addTab(self._tab_raw(),        "原始信号")
+        self.tabs.addTab(self._tab_preprocess(), "预处理对比")
+        self.tabs.addTab(self._tab_features(),   "特征提取")
+        self.tabs.addTab(self._tab_compare(),    "算法对比")
+        self.tabs.addTab(self._tab_cgc(),        "寸关尺分析")
+        self.tabs.addTab(self._tab_recog(),      "脉象识别")
         rl.addWidget(self.tabs)
-        main.addWidget(right, 1)
+        splitter.addWidget(self._build_panel())
+        splitter.addWidget(right)
+        splitter.setSizes([380, 1180])
+        main.addWidget(splitter)
 
     # ---- 顶部统计条 ----
     def _build_topbar(self):
         bar = QWidget()
-        bar.setFixedHeight(86)
+        bar.setMinimumHeight(150)
         bar.setStyleSheet(f"""
             background: qlineargradient(x1:0,y1:0,x2:1,y2:0,
                 stop:0 {'#E3F2FD'}, stop:0.5 {'#DDEEFF'}, stop:1 {'#E3F2FD'});
-            border-radius: 10px;
+            border-radius: 14px;
             border: 1px solid {'#90CAF9'};
         """)
-        lo = QHBoxLayout(bar)
-        lo.setContentsMargins(24,8,24,8)
+        lo = QGridLayout(bar)
+        lo.setContentsMargins(20,14,20,14)
+        lo.setHorizontalSpacing(14)
+        lo.setVerticalSpacing(12)
 
         stats = [
             ("数据来源", "—",       '#1565C0'),
@@ -651,24 +675,29 @@ class MainWindow(QMainWindow):
         self.stat_labels = {}
         for i,(name,default,color) in enumerate(stats):
             w = QWidget()
+            w.setMinimumHeight(58)
+            w.setStyleSheet("""
+                QWidget {
+                    background: #FFFFFF;
+                    border: 1px solid #BBDEFB;
+                    border-radius: 10px;
+                }
+            """)
             wl = QVBoxLayout(w)
-            wl.setContentsMargins(6,2,6,2)
-            wl.setSpacing(3)
+            wl.setContentsMargins(14,8,14,8)
+            wl.setSpacing(4)
             n_lbl = QLabel(name)
-            n_lbl.setStyleSheet(f"color:{'#34567A'};font-size:14px;")
-            n_lbl.setAlignment(Qt.AlignCenter)
+            n_lbl.setStyleSheet(f"color:{'#34567A'};font-size:14px;border:none;background:transparent;")
+            n_lbl.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
             v_lbl = QLabel(default)
-            v_lbl.setStyleSheet(f"color:{color};font-size:20px;font-weight:bold;")
-            v_lbl.setAlignment(Qt.AlignCenter)
+            v_lbl.setStyleSheet(f"color:{color};font-size:21px;font-weight:bold;border:none;background:transparent;")
+            v_lbl.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+            v_lbl.setWordWrap(True)
+            v_lbl.setMinimumWidth(160)
             wl.addWidget(n_lbl)
             wl.addWidget(v_lbl)
             self.stat_labels[name] = v_lbl
-            lo.addWidget(w)
-            if i < len(stats)-1:
-                sep = QFrame()
-                sep.setFrameShape(QFrame.VLine)
-                sep.setStyleSheet(f"color:{'#90CAF9'};max-width:1px;")
-                lo.addWidget(sep)
+            lo.addWidget(w, i // 3, i % 3)
         return bar
 
     def _upd(self, **kw):
@@ -679,32 +708,36 @@ class MainWindow(QMainWindow):
     # ---- 左侧控制面板 ----
     def _build_panel(self):
         panel = QWidget()
-        panel.setFixedWidth(300)
+        panel.setMinimumWidth(350)
         panel.setStyleSheet(f"""
             QWidget{{background:{'#F0F6FF'};border-radius:10px;}}
         """)
         lo = QVBoxLayout(panel)
-        lo.setContentsMargins(16,16,16,16)
-        lo.setSpacing(10)
+        lo.setContentsMargins(18,18,18,18)
+        lo.setSpacing(14)
 
         # 标题
         title = QLabel("脉象分析系统")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet(f"""
-            font-size:24px;font-weight:bold;
-            color:{'#1565C0'};padding:12px 0 6px 0;
+            font-size:26px;font-weight:bold;
+            color:{'#1565C0'};padding:14px 0 8px 0;
             border-bottom:1px solid {'#90CAF9'};
         """)
+        title.setWordWrap(True)
         lo.addWidget(title)
 
         sub = QLabel("软件工程  202228034130  任妍婕")
         sub.setAlignment(Qt.AlignCenter)
-        sub.setStyleSheet(f"color:{'#34567A'};font-size:14px;padding-bottom:6px;")
+        sub.setStyleSheet(f"color:{'#34567A'};font-size:14px;padding-bottom:8px;")
+        sub.setWordWrap(True)
         lo.addWidget(sub)
 
         # ---- 数据模式选择 ----
-        mode_grp = QGroupBox("⚙  数据模式")
+        mode_grp = QGroupBox("数据模式")
         mg = QVBoxLayout(mode_grp)
+        mg.setContentsMargins(18,16,18,14)
+        mg.setSpacing(8)
         self.rb_bidmc  = QRadioButton("公开数据集 (BIDMC)")
         self.rb_custom = QRadioButton("自采数据 (TXT文件)")
         self.rb_bidmc.setChecked(True)
@@ -720,15 +753,16 @@ class MainWindow(QMainWindow):
         p0 = QWidget()
         p0l = QVBoxLayout(p0)
         p0l.setContentsMargins(0,0,0,0)
-        p0l.setSpacing(8)
+        p0l.setSpacing(10)
         p0l.addWidget(QLabel("选择受试者:"))
         self.subject_cb = QComboBox()
+        self.subject_cb.setMinimumWidth(220)
         self.subject_cb.addItems([f"bidmc{i:02d}" for i in range(1,54)])
         p0l.addWidget(self.subject_cb)
-        self.dir_btn = QPushButton("📁 选择数据目录")
+        self.dir_btn = QPushButton("选择数据目录")
         self.dir_btn.clicked.connect(self._choose_dir)
         p0l.addWidget(self.dir_btn)
-        self.load_btn0 = QPushButton("▶  加载BIDMC数据")
+        self.load_btn0 = QPushButton("加载BIDMC数据")
         self.load_btn0.setObjectName("primary")
         self.load_btn0.clicked.connect(self._load_bidmc)
         p0l.addWidget(self.load_btn0)
@@ -738,18 +772,20 @@ class MainWindow(QMainWindow):
         p1 = QWidget()
         p1l = QVBoxLayout(p1)
         p1l.setContentsMargins(0,0,0,0)
-        p1l.setSpacing(8)
+        p1l.setSpacing(10)
         self.custom_btns = {}
         self.custom_lbls = {}
         for part in ['寸', '关', '尺']:
             row = QWidget()
             rl = QHBoxLayout(row)
             rl.setContentsMargins(0,0,0,0)
-            btn = QPushButton(f"📂 {part}部")
-            btn.setFixedWidth(86)
+            rl.setSpacing(10)
+            btn = QPushButton(f"{part}部文件")
+            btn.setMinimumWidth(108)
             btn.clicked.connect(lambda checked,p=part: self._load_custom_file(p))
             lbl = QLabel("未选择")
             lbl.setStyleSheet(f"color:{'#34567A'};font-size:14px;")
+            lbl.setMinimumWidth(150)
             lbl.setWordWrap(True)
             rl.addWidget(btn)
             rl.addWidget(lbl)
@@ -760,14 +796,16 @@ class MainWindow(QMainWindow):
         fs_row = QWidget()
         fsl = QHBoxLayout(fs_row)
         fsl.setContentsMargins(0,0,0,0)
+        fsl.setSpacing(10)
         fsl.addWidget(QLabel("采样率(Hz):"))
         self.fs_spin = QSpinBox()
         self.fs_spin.setRange(10, 1000)
         self.fs_spin.setValue(50)
+        self.fs_spin.setMinimumWidth(130)
         fsl.addWidget(self.fs_spin)
         p1l.addWidget(fs_row)
 
-        self.load_btn1 = QPushButton("▶  加载自采数据")
+        self.load_btn1 = QPushButton("加载自采数据")
         self.load_btn1.setObjectName("gold")
         self.load_btn1.clicked.connect(self._load_custom)
         p1l.addWidget(self.load_btn1)
@@ -781,56 +819,66 @@ class MainWindow(QMainWindow):
             color:{'#34567A'};font-size:14px;
             background:{'#E3F2FD'};border-radius:4px;
             border:1px solid {'#BBDEFB'};
-            padding:6px;
+            padding:10px;
         """)
+        self.info_lbl.setMinimumHeight(50)
         self.info_lbl.setWordWrap(True)
         lo.addWidget(self.info_lbl)
 
         # ---- 预处理参数 ----
-        pre_grp = QGroupBox("🔬  预处理参数")
+        pre_grp = QGroupBox("预处理参数")
         pg = QGridLayout(pre_grp)
-        pg.setSpacing(8)
+        pg.setContentsMargins(18,16,18,14)
+        pg.setHorizontalSpacing(12)
+        pg.setVerticalSpacing(10)
         pg.addWidget(QLabel("小波基:"), 0, 0)
         self.wav_cb = QComboBox()
+        self.wav_cb.setMinimumWidth(130)
         self.wav_cb.addItems(['db4','db6','sym4','coif2'])
         pg.addWidget(self.wav_cb, 0, 1)
         pg.addWidget(QLabel("分解层:"), 1, 0)
         self.lv_sp = QSpinBox()
         self.lv_sp.setRange(3,8); self.lv_sp.setValue(5)
+        self.lv_sp.setMinimumWidth(130)
         pg.addWidget(self.lv_sp, 1, 1)
-        pre_run = QPushButton("🔬 运行预处理")
+        pre_run = QPushButton("运行预处理")
         pre_run.setObjectName("primary")
         pre_run.clicked.connect(self._run_preprocess)
         pg.addWidget(pre_run, 2, 0, 1, 2)
         lo.addWidget(pre_grp)
 
         # ---- 检测参数 ----
-        det_grp = QGroupBox("📌  检测参数")
+        det_grp = QGroupBox("检测参数")
         dg = QGridLayout(det_grp)
-        dg.setSpacing(8)
+        dg.setContentsMargins(18,16,18,14)
+        dg.setHorizontalSpacing(12)
+        dg.setVerticalSpacing(10)
         dg.addWidget(QLabel("α (均值权重):"), 0, 0)
         self.alpha_sp = QDoubleSpinBox()
         self.alpha_sp.setRange(0.5,3.0); self.alpha_sp.setSingleStep(0.1)
         self.alpha_sp.setValue(1.5)
+        self.alpha_sp.setMinimumWidth(130)
         dg.addWidget(self.alpha_sp, 0, 1)
         dg.addWidget(QLabel("β (标准差权重):"), 1, 0)
         self.beta_sp = QDoubleSpinBox()
         self.beta_sp.setRange(0.0,2.0); self.beta_sp.setSingleStep(0.1)
         self.beta_sp.setValue(0.5)
+        self.beta_sp.setMinimumWidth(130)
         dg.addWidget(self.beta_sp, 1, 1)
-        feat_btn = QPushButton("📌 运行特征提取")
+        feat_btn = QPushButton("运行特征提取")
         feat_btn.setObjectName("primary")
         feat_btn.clicked.connect(self._run_features)
         dg.addWidget(feat_btn, 2, 0, 1, 2)
-        cmp_btn = QPushButton("📊 运行算法对比")
+        cmp_btn = QPushButton("运行算法对比")
         cmp_btn.clicked.connect(self._run_compare)
         dg.addWidget(cmp_btn, 3, 0, 1, 2)
         lo.addWidget(det_grp)
 
         # ---- 导出 ----
-        exp_grp = QGroupBox("💾  导出")
+        exp_grp = QGroupBox("导出")
         el = QVBoxLayout(exp_grp)
-        save_btn = QPushButton("💾 保存所有图表")
+        el.setContentsMargins(18,16,18,14)
+        save_btn = QPushButton("保存所有图表")
         save_btn.setObjectName("danger")
         save_btn.clicked.connect(self._save_all)
         el.addWidget(save_btn)
@@ -842,7 +890,12 @@ class MainWindow(QMainWindow):
         self.progress.setVisible(False)
         lo.addWidget(self.progress)
 
-        return panel
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setMinimumWidth(370)
+        scroll.setMaximumWidth(430)
+        scroll.setWidget(panel)
+        return scroll
 
     # ---- 标签页 ----
     def _tab_raw(self):
@@ -917,10 +970,10 @@ class MainWindow(QMainWindow):
         ml = QHBoxLayout(mid); ml.setContentsMargins(0,0,0,0); ml.setSpacing(8)
         self.cv_rec_bar   = Canvas(figsize=(9,4.3))
         self.cv_rec_radar = Canvas(figsize=(5,4.3))
-        bg = QGroupBox("📊 各脉象匹配度")
+        bg = QGroupBox("各脉象匹配度")
         bg.setStyleSheet(self._grp())
         bgl = QVBoxLayout(bg); bgl.addWidget(self.cv_rec_bar)
-        rg = QGroupBox("🕸️ 特征雷达图")
+        rg = QGroupBox("特征雷达图")
         rg.setStyleSheet(self._grp())
         rgl = QVBoxLayout(rg); rgl.addWidget(self.cv_rec_radar)
         ml.addWidget(bg, 3)
@@ -933,7 +986,7 @@ class MainWindow(QMainWindow):
 
     def _make_rec_card(self):
         card = QWidget()
-        card.setFixedHeight(116)
+        card.setMinimumHeight(128)
         card.setStyleSheet(f"""
             background: qlineargradient(x1:0,y1:0,x2:1,y2:0,
                 stop:0 {'#E3F2FD'}, stop:1 {'#DDEEFF'});
