@@ -1001,33 +1001,41 @@ class MainWindow(QMainWindow):
 
     def _tab_recog(self):
         w = QWidget()
-        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8)
+        l = QVBoxLayout(w); l.setContentsMargins(8,8,8,8); l.setSpacing(8)
 
         # 结果卡片
         self.rec_card = self._make_rec_card()
-        l.addWidget(self.rec_card)
+        l.addWidget(self.rec_card, 0)
 
         mid = QWidget()
+        mid.setMinimumHeight(420)
         ml = QHBoxLayout(mid); ml.setContentsMargins(0,0,0,0); ml.setSpacing(8)
-        self.cv_rec_bar   = Canvas(figsize=(9,4.3))
-        self.cv_rec_radar = Canvas(figsize=(5,4.3))
+        self.cv_rec_bar   = Canvas(figsize=(9,5.4))
+        self.cv_rec_radar = Canvas(figsize=(5,5.4))
+        self.cv_rec_bar.coord_label.setVisible(False)
+        self.cv_rec_radar.coord_label.setVisible(False)
+        self.cv_rec_bar.setMinimumHeight(380)
+        self.cv_rec_radar.setMinimumHeight(380)
         bg = QGroupBox("各脉象匹配度")
+        bg.setMinimumHeight(410)
         bg.setStyleSheet(self._grp())
-        bgl = QVBoxLayout(bg); bgl.addWidget(self.cv_rec_bar)
+        bgl = QVBoxLayout(bg); bgl.setContentsMargins(12,34,12,12); bgl.addWidget(self.cv_rec_bar)
         rg = QGroupBox("特征雷达图")
+        rg.setMinimumHeight(410)
         rg.setStyleSheet(self._grp())
-        rgl = QVBoxLayout(rg); rgl.addWidget(self.cv_rec_radar)
+        rgl = QVBoxLayout(rg); rgl.setContentsMargins(12,34,12,12); rgl.addWidget(self.cv_rec_radar)
         ml.addWidget(bg, 3)
         ml.addWidget(rg, 2)
-        l.addWidget(mid, 3)
+        l.addWidget(mid, 1)
 
-        self.rec_tbl = self._make_table(8, ["脉象","匹配分数","置信度","中医主治","脉象描述"])
-        l.addWidget(self.rec_tbl, 1)
+        self.rec_tbl = self._make_table(8, ["脉象","匹配分数","置信度","中医主治","脉象描述"], 130)
+        l.addWidget(self.rec_tbl, 0)
         return w
 
     def _make_rec_card(self):
         card = QWidget()
-        card.setMinimumHeight(128)
+        card.setMinimumHeight(104)
+        card.setMaximumHeight(116)
         card.setStyleSheet(f"""
             background: qlineargradient(x1:0,y1:0,x2:1,y2:0,
                 stop:0 {'#E3F2FD'}, stop:1 {'#DDEEFF'});
@@ -1097,10 +1105,11 @@ class MainWindow(QMainWindow):
     def _grp(self):
         return f"""
             QGroupBox{{border:1px solid {'#90CAF9'};border-radius:8px;
-            margin-top:12px;padding-top:8px;color:{'#1565C0'};
+            margin-top:8px;padding-top:32px;color:{'#1565C0'};
             font-weight:bold;font-size:15px;}}
-            QGroupBox::title{{subcontrol-origin:margin;left:12px;top:-7px;
-            padding:0 6px;background:{'#FFFFFF'};}}
+            QGroupBox::title{{subcontrol-origin:margin;subcontrol-position:top left;
+            left:14px;top:4px;padding:4px 12px;background:{'#FFFFFF'};
+            border:1px solid {'#BBDEFB'};border-radius:5px;}}
         """
 
     # ==================== 模式切换 ====================
